@@ -82,7 +82,23 @@ environment:
             target: ""
     compose_file_path: ""
 execution:
-    apps: []
+    apps:
+        - name: tensorboard
+          type: custom
+          class: webapp
+          start_command: tensorboard --logdir \$TENSORBOARD_LOGS_DIRECTORY --path_prefix=\$PROXY_PREFIX --bind_all
+          health_check_command: '[ \$(curl -o /dev/null -s -w ''%{http_code}'' http://localhost:\$TENSORBOARD_PORT\$PROXY_PREFIX/) == ''200'' ]'
+          stop_command: pkill tensorboard
+          user_msg: ""
+          logfile_path: ""
+          timeout_seconds: 60
+          icon_url: ""
+          webapp_options:
+            autolaunch: true
+            port: "6006"
+            proxy:
+                trim_prefix: false
+            url: http://localhost:6006
     resources:
         gpu:
             requested: 1
